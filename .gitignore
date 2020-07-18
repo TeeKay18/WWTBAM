@@ -1,0 +1,6 @@
+env
+app/questions
+app/music
+*.pyc
+*.png
+*.json

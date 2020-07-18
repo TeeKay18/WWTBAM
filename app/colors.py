@@ -1,0 +1,5 @@
+white = "#ffffff"
+purple = "#4b0082"
+green = "#00ff00"
+orange = "#ffa500"
+blue = "#0000ff"
