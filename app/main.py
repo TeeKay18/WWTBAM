@@ -73,7 +73,6 @@ def tree_listbox(root: tk.Frame, wdth: int, num_questions: int, new_name: str) -
 
 
 def update_game_tree(no_question: int) -> None:
-    print("NO QUESTION:", no_question)
     localization = ".game_frame.tree_frame.current_question_lst"
     gui.nametowidget(localization).delete(15-no_question, 15-no_question)
     gui.nametowidget(localization).insert(15-no_question, " •")
@@ -230,7 +229,8 @@ def check_answer_correct(button_name: str, game: Game) -> None:
             time_verification = 6000
         else:
             time_verification = 7000
-        gui.after(time_verification, lambda: verify_correct_answer(game, user_answer, answers, localization))
+        gui.after(time_verification, lambda: verify_correct_answer(game, user_answer,
+                                                                   answers, localization))
 
 
 def answer_button(root: tk.Frame, new_name: str, game: Game) -> tk.Button:
@@ -308,7 +308,6 @@ def next_question():
     question = game.choose_random_question()
     write_question(question)
     game.question_shown = True
-    print("AND HERE")
 
 
 def lets_play():
