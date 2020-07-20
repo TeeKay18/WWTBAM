@@ -10,7 +10,7 @@ from time import sleep
 from tkinter.font import Font
 from typing import List, Callable
 
-from app.colors import white, purple, green, orange, blue, black
+from app.colors import white, purple, green, orange, blue, black, red
 from app.game import Game
 
 
@@ -60,7 +60,7 @@ def set_lifelines() -> None:
     doubledip_image = Image.open(str(graphics_folder / "doubledip.png"))
     doubledip_image_resized = resize_image(doubledip_image, lifelines_width, lifelines_height)
     doubledip_button = button_with_image(lifelines_frame, doubledip_image_resized,
-                                         None, "doubledip_button")
+                                         thread_ddip, "doubledip_button")
     lifelines_frame.grid(row=0, column=0)
 
     fifty_button.grid(row=0, column=0)
@@ -156,6 +156,10 @@ def set_widget_color(widget: tk.Text, color: str) -> None:
     widget.configure(state="disabled")
 
 
+def first_wrong_answer(widget: tk.Text) -> None:
+    set_widget_color(widget, red)
+
+
 def confirm_final_answer(widget: tk.Text) -> None:
     set_widget_color(widget, orange)
 
@@ -185,32 +189,67 @@ def green_answer(answers: List[str], localization: str):
             show_correct_answer(ans_widget)
 
 
+def winning_sequence() -> None:
+    play(game.get_music_for_question()[3])
+    time_next_question = 0
+    if game.question_number < game.guaranteed_questions[0]:
+        time_next_question = 1500
+    elif game.question_number == game.guaranteed_questions[0]:
+        time_next_question = 8000
+    elif game.question_number < game.guaranteed_questions[1]:
+        time_next_question = 4000
+    elif game.question_number == game.guaranteed_questions[1]:
+        time_next_question = 9000
+    else:
+        time_next_question = 6500
+    game.question_number += 1
+    gui.after(time_next_question, lambda: start_thread_lets_play())
+
+
+def losing_sequence():
+    play(game.get_music_for_question()[4])
+    gui.after(3500, lambda: clear_question_and_answer_boxes())
+    game.game_on = False
+    reset_new_game_button()
+
+
 def verify_correct_answer(game: Game, user_answer: str,
                           answers: List[str], localization: str) -> None:
     green_answer(answers, localization)
     if game.answer_correct(user_answer, game.current_question):
-        play(game.get_music_for_question()[3])
-        time_next_question = 0
-        if game.question_number < game.guaranteed_questions[0]:
-            time_next_question = 1500
-        elif game.question_number == game.guaranteed_questions[0]:
-            time_next_question = 8000
-        elif game.question_number < game.guaranteed_questions[1]:
-            time_next_question = 4000
-        elif game.question_number == game.guaranteed_questions[1]:
-            time_next_question = 9000
-        else:
-            time_next_question = 6500
-        game.question_number += 1
-        gui.after(time_next_question, lambda: start_thread_lets_play())
+        winning_sequence()
     else:
-        play(game.get_music_for_question()[4])
-        gui.after(3500, lambda: clear_question_and_answer_boxes())
-        game.game_on = False
-        reset_new_game_button()
+        losing_sequence()
 
     game.question_answered = False
     game.question_shown = False
+
+
+def check_answer_correct_double_dip(button_name: str, game: Game) -> None:
+    if game.game_on and game.question_shown and not game.question_answered:
+        localization = ".question_frame.answers_frame.answer_"
+        butt_localization = ".question_frame.answers_frame.button_"
+        dip_localization = ".game_frame.lifelines_frame.doubledip_button"
+        letter = button_name[-1]
+        answer_widget = gui.nametowidget(localization + letter)
+        confirm_final_answer(answer_widget)
+        final_ans_sound = game.lifeline_themes[2]
+        play(final_ans_sound)
+        user_answer = answer_widget.get("1.0", "end-1c")
+        answers = ["A", "B", "C", "D"]
+        if game.answer_correct(user_answer, game.current_question):
+            gui.after(3900, lambda: green_answer(answers, localization))
+            gui.after(4000, lambda: winning_sequence())
+            gui.after(4000, lambda: change_button_image(dip_localization, "doubledipused.png"))
+        else:
+            answer_text = gui.nametowidget(localization + letter)
+            gui.after(3900, lambda: first_wrong_answer(answer_text))
+            gui.after(4000, lambda: play(game.lifeline_themes[3]))
+        f = check_answer_correct
+        gui.nametowidget(butt_localization + "A").config(command=lambda: f("button_A", game))
+        gui.nametowidget(butt_localization + "B").config(command=lambda: f("button_B", game))
+        gui.nametowidget(butt_localization + "C").config(command=lambda: f("button_C", game))
+        gui.nametowidget(butt_localization + "D").config(command=lambda: f("button_D", game))
 
 
 def check_answer_correct(button_name: str, game: Game) -> None:
@@ -222,7 +261,11 @@ def check_answer_correct(button_name: str, game: Game) -> None:
 
         confirm_final_answer(answer_widget)
         final_ans_sound = game.get_music_for_question()[2]
-        if final_ans_sound is not None:
+        if game.double_dip == game.question_number:
+            play(game.lifeline_themes[4])
+            dip_localization = ".game_frame.lifelines_frame.doubledip_button"
+            change_button_image(dip_localization, "doubledipused.png")
+        elif final_ans_sound is not None:
             play(final_ans_sound)
 
         user_answer = answer_widget.get("1.0", "end-1c")
@@ -230,9 +273,9 @@ def check_answer_correct(button_name: str, game: Game) -> None:
         answers = ["A", "B", "C", "D"]
         time_verification = 0
         if game.question_number < game.guaranteed_questions[0]:
-            time_verification = 500
+            time_verification = 2000
         elif game.question_number == game.guaranteed_questions[0]:
-            time_verification = 1500
+            time_verification = 3000
         elif game.question_number < game.guaranteed_questions[1]:
             time_verification = 4500
         elif game.question_number == game.guaranteed_questions[2]:
@@ -292,7 +335,7 @@ def thread_on_walkaway() -> None:
 
 
 def on_walkaway() -> None:
-    if game.question_shown:
+    if game.question_shown and game.double_dip != game.question_number:
         localization = ".question_frame.answers_frame.answer_"
         game.game_on = False
         stop_music()
@@ -405,7 +448,9 @@ def change_button_image(localization: str, image_path: str) -> None:
 
 
 def switch_the_question() -> None:
-    if game.game_on and game.question_shown and not game.switch:
+    if (game.game_on and game.question_shown and not game.switch
+       and game.double_dip != game.question_number):
+        game.switch = game.question_number
         switch_localization = ".game_frame.lifelines_frame.switch_button"
         change_button_image(switch_localization, "switchactivated.png")
         play(game.lifeline_themes[-1])
@@ -426,7 +471,9 @@ def thread_fifty() -> None:
 
 
 def fifty_fifty() -> None:
-    if game.game_on and game.question_shown and not game.fifty_fifty:
+    if (game.game_on and game.question_shown and not game.fifty_fifty
+       and game.double_dip != game.question_number):
+        game.fifty_fifty = game.question_number
         fifty_localization = ".game_frame.lifelines_frame.fifty_button"
         change_button_image(fifty_localization, "fiftyused.png")
         random_wrong_answers = game.lifeline_fifty_fifty(game.current_question)
@@ -441,6 +488,27 @@ def fifty_fifty() -> None:
                 answer_text.config(state="disabled")
         music = game.get_music_for_question()
         gui.after(1000, lambda: play(music[1]))
+
+
+def thread_ddip():
+    thread = threading.Thread(target=double_dip)
+    thread.daemon = True
+    thread.start()
+
+
+def double_dip():
+    if (game.game_on and game.question_shown and not game.double_dip
+       and game.fifty_fifty != game.question_number):
+        game.double_dip = game.question_number
+        double_dip_localization = ".game_frame.lifelines_frame.doubledip_button"
+        change_button_image(double_dip_localization, "doubledipactivated.png")
+        play(game.lifeline_themes[1])
+        buttons_localization = ".question_frame.answers_frame.button_"
+        f = check_answer_correct_double_dip
+        gui.nametowidget(buttons_localization + "A").config(command=lambda: f("button_A", game))
+        gui.nametowidget(buttons_localization + "B").config(command=lambda: f("button_B", game))
+        gui.nametowidget(buttons_localization + "C").config(command=lambda: f("button_C", game))
+        gui.nametowidget(buttons_localization + "D").config(command=lambda: f("button_D", game))
 
 
 if __name__ == "__main__":

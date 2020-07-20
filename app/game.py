@@ -1,7 +1,8 @@
-from typing import List
-from pathlib import Path
 import codecs
+
+from typing import List
 from random import choice, randint
+from pathlib import Path
 
 
 class Game:
@@ -48,10 +49,10 @@ class Game:
                             for symbol in lets_play_symbols]
 
         self.lifeline_themes = [self.music_path / "50-50.mp3",
-                                self.music_path / "doubledip1ans.mp3",
                                 self.music_path / "doubledip1guess.mp3",
-                                self.music_path / "doubledip2ans.mp3",
+                                self.music_path / "doubledip1ans.mp3",
                                 self.music_path / "doubledip2guess.mp3",
+                                self.music_path / "doubledip2ans.mp3",
                                 self.music_path / "switchthequestion.mp3"]
 
         fst_guaranteed = guaranteed_questions[0]
