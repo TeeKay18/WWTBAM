@@ -63,14 +63,13 @@ class Game:
                      [(i-snd_guaranteed+1) % 7 for i in range(snd_guaranteed+1, victory)]
         q_indices = [0] * (fst_guaranteed) + [(i-fst_guaranteed+1) % 11
                                               for i in range(fst_guaranteed, victory)]
-        fa_indices = [-1] * (fst_guaranteed) + [i % 5 for i in range(fst_guaranteed, victory)]
+        fa_indices = [-1] * (fst_guaranteed) + [(i-fst_guaranteed) % 5 for i in range(fst_guaranteed, victory)]
         ca_indices = [0] * (fst_guaranteed-1) + [(i-fst_guaranteed+1) % 12
                                                  for i in range(fst_guaranteed, victory+1)]
-        wa_indices = [0] * (fst_guaranteed-1) + [i % 5
-                                                 for i in range(fst_guaranteed, snd_guaranteed)] +\
-                                                [5] +\
-                                                [(i+1) % 5
-                                                 for i in range(snd_guaranteed, victory-1)] + [6]
+        wa_indices = [0] * (fst_guaranteed) + [(i-fst_guaranteed+1) % 6
+                                               for i in range(fst_guaranteed, snd_guaranteed)] +\
+                                              [(i-snd_guaranteed+1) % 5
+                                               for i in range(snd_guaranteed, victory-1)] + [6]
 
         self.music_settings = [[lets_play_themes[lp_indices[i]]
                                 if lp_indices[i] >= 0 else None,

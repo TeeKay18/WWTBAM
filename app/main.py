@@ -23,6 +23,10 @@ def play(file_path: Path) -> None:
     pygame.mixer.music.play()
 
 
+def stop_music() -> None:
+    pygame.mixer.music.stop()
+
+
 def play_intro() -> None:
     play(app_folder / "music" / "intro.mp3")
 
@@ -113,19 +117,20 @@ def parse_tree() -> List[int]:
         no_question_lst.configure(justify="right")
 
         # This makes sure that tree is read-only
-        prices_lst.bindtags((prices_lst, tree_frame, "all"))
-        current_question_lst.bindtags((current_question_lst, tree_frame, "all"))
-        no_question_lst.bindtags((no_question_lst, tree_frame, "all"))
+        read_only = tree_frame, "all"
+        prices_lst.bindtags((prices_lst, read_only))
+        current_question_lst.bindtags((current_question_lst, read_only))
+        no_question_lst.bindtags((no_question_lst, read_only))
 
     return guaranteed_questions
 
 
 def set_game_button() -> None:
     button_font = Font(family=times_new_roman, size=18)
-    button_frame = tk.Frame(game_frame)
+    button_frame = tk.Frame(game_frame, name="button_frame")
     game_button = tk.Button(button_frame, bg=orange, fg=white,
                             text="Nowa gra", font=button_font, padx=23,
-                            command=start_thread_lets_play)
+                            command=start_thread_lets_play, name="game_button")
     button_frame.grid(row=2, column=0)
     game_button.grid(row=0, column=0)
 
@@ -144,16 +149,18 @@ def answer_text(root: tk.Frame, fnt: Font, new_name: str) -> tk.Text:
                    name=new_name, state="disabled")
 
 
-def confirm_final_answer(widget: tk.Text) -> None:
+def set_widget_color(widget: tk.Text, color: str) -> None:
     widget.configure(state="normal")
-    widget.configure(bg=orange)
+    widget.configure(bg=color)
     widget.configure(state="disabled")
+
+
+def confirm_final_answer(widget: tk.Text) -> None:
+    set_widget_color(widget, orange)
 
 
 def show_correct_answer(widget: tk.Text) -> None:
-    widget.configure(state="normal")
-    widget.configure(bg=green)
-    widget.configure(state="disabled")
+    set_widget_color(widget, green)
 
 
 def clear_question_and_answer_boxes():
@@ -186,21 +193,23 @@ def verify_correct_answer(game: Game, user_answer: str,
         if game.question_number < game.guaranteed_questions[0]:
             time_next_question = 1500
         elif game.question_number == game.guaranteed_questions[0]:
-            time_next_question = 10000
+            time_next_question = 8000
         elif game.question_number < game.guaranteed_questions[1]:
-            time_next_question = 5000
+            time_next_question = 4000
         elif game.question_number == game.guaranteed_questions[1]:
-            time_next_question = 10000
+            time_next_question = 9000
         else:
-            time_next_question = 7500
+            time_next_question = 6500
         game.question_number += 1
         gui.after(time_next_question, lambda: start_thread_lets_play())
     else:
         play(game.get_music_for_question()[4])
         gui.after(3500, lambda: clear_question_and_answer_boxes())
         game.game_on = False
+        reset_new_game_button()
 
     game.question_answered = False
+    game.question_shown = False
 
 
 def check_answer_correct(button_name: str, game: Game) -> None:
@@ -265,12 +274,44 @@ def set_answer_boxes(game: Game) -> None:
     answers_frame.grid(row=1, column=0)
 
 
+def reset_new_game_button():
+    localization = ".game_frame.button_frame.game_button"
+    gui.nametowidget(localization).config(text="Nowa gra", padx=23, command=start_thread_lets_play)
+
+
+def set_walkaway_button():
+    localization = ".game_frame.button_frame.game_button"
+    gui.nametowidget(localization).config(text="Rezygnuję", padx=19, command=thread_on_walkaway)
+
+
+def thread_on_walkaway():
+    thread = threading.Thread(target=on_walkaway)
+    thread.daemon = True
+    thread.start()
+
+
+def on_walkaway():
+    if game.question_shown:
+        localization = ".question_frame.answers_frame.answer_"
+        game.game_on = False
+        stop_music()
+        answers = ["A", "B", "C", "D"]
+        green_answer(answers, localization)
+        gui.after(4000, lambda: clear_question_and_answer_boxes())
+        reset_new_game_button()
+
+
+def setup_new_game():
+    set_walkaway_button()
+    reset_pointers()
+    game.question_number = 1
+    game.question_shown = False
+    game.get_questions()
+
+
 def start_thread_lets_play():
     if not game.game_on:
-        reset_pointers()
-        game.question_number = 1
-        game.question_shown = False
-        game.get_questions()
+        setup_new_game()
     thread = threading.Thread(target=lets_play)
     thread.daemon = True
     thread.start()
