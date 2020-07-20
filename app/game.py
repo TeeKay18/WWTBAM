@@ -82,6 +82,7 @@ class Game:
                                 ] for i in range(victory)
                                ]
 
+    def get_questions(self) -> None:
         with codecs.open(self.questions_path, "r", "utf-8") as questions_file:
             questions_data = questions_file.read().splitlines()
             self._questions = [[int(questions_data[i]),

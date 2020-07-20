@@ -40,7 +40,7 @@ def button_with_image(root: tk.Tk, img: ImageTk.PhotoImage) -> None:
 
 def set_lifelines() -> None:
     graphics_folder = app_folder / "graphics"
-    width, height = 46, 30
+    width, height = 50, 30
 
     lifelines_frame = tk.Frame(game_frame)
 
@@ -74,8 +74,8 @@ def tree_listbox(root: tk.Frame, wdth: int, num_questions: int, new_name: str) -
 
 def update_game_tree(no_question: int) -> None:
     localization = ".game_frame.tree_frame.current_question_lst"
-    gui.nametowidget(localization).delete(15-no_question, 15-no_question)
-    gui.nametowidget(localization).insert(15-no_question, " •")
+    gui.nametowidget(localization).delete(num_questions-no_question, num_questions-no_question)
+    gui.nametowidget(localization).insert(num_questions-no_question, " •")
 
 
 def parse_tree() -> List[int]:
@@ -93,7 +93,7 @@ def parse_tree() -> List[int]:
 
         prices_lst = tree_listbox(tree_frame, 9, num_questions, "prices_lst")
         no_question_lst = tree_listbox(tree_frame, 2, num_questions, "no_question_lst")
-        current_question_lst = tree_listbox(tree_frame, 1, num_questions, "current_question_lst")
+        current_question_lst = tree_listbox(tree_frame, 2, num_questions, "current_question_lst")
 
         for i in range(len(prices)):
             end = "end"
@@ -124,7 +124,7 @@ def set_game_button() -> None:
     button_font = Font(family=times_new_roman, size=18)
     button_frame = tk.Frame(game_frame)
     game_button = tk.Button(button_frame, bg=orange, fg=white,
-                            text="Nowa gra", font=button_font, padx=17,
+                            text="Nowa gra", font=button_font, padx=23,
                             command=start_thread_lets_play)
     button_frame.grid(row=2, column=0)
     game_button.grid(row=0, column=0)
@@ -133,7 +133,7 @@ def set_game_button() -> None:
 def set_question_box() -> None:
     question_font = Font(family=times_new_roman, size=16)
     question_text = tk.Text(question_frame, height=2, font=question_font,
-                            bg=purple, fg=white, width=56, wrap="word",
+                            bg=purple, fg=white, width=57, wrap="word",
                             name="question_text", state="disabled")
     question_text.grid(row=0, column=0, padx=14, pady=12)
 
@@ -193,14 +193,14 @@ def verify_correct_answer(game: Game, user_answer: str,
             time_next_question = 10000
         else:
             time_next_question = 7500
-
-        game.question_answered = False
         game.question_number += 1
         gui.after(time_next_question, lambda: start_thread_lets_play())
     else:
         play(game.get_music_for_question()[4])
         gui.after(3500, lambda: clear_question_and_answer_boxes())
         game.game_on = False
+
+    game.question_answered = False
 
 
 def check_answer_correct(button_name: str, game: Game) -> None:
@@ -266,6 +266,11 @@ def set_answer_boxes(game: Game) -> None:
 
 
 def start_thread_lets_play():
+    if not game.game_on:
+        reset_pointers()
+        game.question_number = 1
+        game.question_shown = False
+        game.get_questions()
     thread = threading.Thread(target=lets_play)
     thread.daemon = True
     thread.start()
@@ -286,8 +291,8 @@ def write_answer(question: list, indices: list, stop: int, end: int, answer_str:
 
 
 def write_question(question: list) -> None:
-    time_question = 5
-    time_answers = 1.5
+    time_question = 0.1
+    time_answers = 0.1
     question_widget = gui.nametowidget(".question_frame.question_text")
     insert_text(question_widget, question[1])
     sleep(time_question)
@@ -320,9 +325,16 @@ def lets_play():
         next_question()
 
 
+def reset_pointers() -> None:
+    localization = ".game_frame.tree_frame.current_question_lst"
+    gui.nametowidget(localization).delete(1, num_questions)
+    for i in range(num_questions):
+        gui.nametowidget(localization).insert(i, " ")
+
+
 if __name__ == "__main__":
     gui = tk.Tk(className='Milionerzy')
-    gui.geometry("800x500")
+    gui.geometry("820x500")
     gui.configure(bg=blue)
 
     pygame.init()
@@ -336,7 +348,9 @@ if __name__ == "__main__":
     play_intro()
     set_lifelines()
     guaranteed_questions = parse_tree()
+    num_questions = guaranteed_questions[len(guaranteed_questions)-1]
     game = Game(guaranteed_questions)
+    game.get_questions()
     set_game_button()
     set_question_box()
     set_answer_boxes(game)
