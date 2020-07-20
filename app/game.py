@@ -63,7 +63,8 @@ class Game:
                      [(i-snd_guaranteed+1) % 7 for i in range(snd_guaranteed+1, victory)]
         q_indices = [0] * (fst_guaranteed) + [(i-fst_guaranteed+1) % 11
                                               for i in range(fst_guaranteed, victory)]
-        fa_indices = [-1] * (fst_guaranteed) + [(i-fst_guaranteed) % 5 for i in range(fst_guaranteed, victory)]
+        fa_indices = [-1] * (fst_guaranteed) + [(i-fst_guaranteed) % 5
+                                                for i in range(fst_guaranteed, victory)]
         ca_indices = [0] * (fst_guaranteed-1) + [(i-fst_guaranteed+1) % 12
                                                  for i in range(fst_guaranteed, victory+1)]
         wa_indices = [0] * (fst_guaranteed) + [(i-fst_guaranteed+1) % 6
@@ -116,3 +117,8 @@ class Game:
 
     def get_music_for_question(self):
         return self.music_settings[self.question_number-1]
+
+    def reset_lifelines(self):
+        self.fifty_fifty = 0
+        self.switch = 0
+        self.double_dip = 0

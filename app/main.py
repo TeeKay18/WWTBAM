@@ -8,7 +8,7 @@ from pathlib import Path
 from PIL import Image, ImageTk
 from time import sleep
 from tkinter.font import Font
-from typing import List
+from typing import List, Callable
 
 from app.colors import white, purple, green, orange, blue, black
 from app.game import Game
@@ -16,6 +16,8 @@ from app.game import Game
 
 app_folder = Path("app")
 times_new_roman = "Times New Roman"
+graphics_folder = app_folder / "graphics"
+lifelines_width, lifelines_height = 50, 30
 
 
 def play(file_path: Path) -> None:
@@ -36,30 +38,28 @@ def resize_image(image: ImageTk.PhotoImage, width: int, height: int) -> ImageTk.
     return ImageTk.PhotoImage(image)
 
 
-def button_with_image(root: tk.Tk, img: ImageTk.PhotoImage) -> None:
-    button = tk.Button(root, image=img, bd=0, bg=purple)
+def button_with_image(root: tk.Tk, img: ImageTk.PhotoImage, func: Callable, new_name: str) -> None:
+    button = tk.Button(root, image=img, bd=0, bg=purple, command=func, name=new_name)
     button.image = img
     return button
 
 
 def set_lifelines() -> None:
-    graphics_folder = app_folder / "graphics"
-    width, height = 50, 30
-
-    lifelines_frame = tk.Frame(game_frame)
+    lifelines_frame = tk.Frame(game_frame, name="lifelines_frame")
 
     fifty_image = Image.open(str(graphics_folder / "fifty.png"))
-    fifty_image_resized = resize_image(fifty_image, width, height)
-    fifty_button = button_with_image(lifelines_frame, fifty_image_resized)
+    fifty_image_resized = resize_image(fifty_image, lifelines_width, lifelines_height)
+    fifty_button = button_with_image(lifelines_frame, fifty_image_resized, None, "fifty_button")
 
     switch_image = Image.open(str(graphics_folder / "switch.png"))
-    switch_image_resized = resize_image(switch_image, width, height)
-    switch_button = button_with_image(lifelines_frame, switch_image_resized)
+    switch_image_resized = resize_image(switch_image, lifelines_width, lifelines_height)
+    switch_button = button_with_image(lifelines_frame, switch_image_resized,
+                                      thread_switch, "switch_button")
 
     doubledip_image = Image.open(str(graphics_folder / "doubledip.png"))
-    doubledip_image_resized = resize_image(doubledip_image, width, height)
-    doubledip_button = button_with_image(lifelines_frame, doubledip_image_resized)
-
+    doubledip_image_resized = resize_image(doubledip_image, lifelines_width, lifelines_height)
+    doubledip_button = button_with_image(lifelines_frame, doubledip_image_resized,
+                                         None, "doubledip_button")
     lifelines_frame.grid(row=0, column=0)
 
     fifty_button.grid(row=0, column=0)
@@ -90,9 +90,9 @@ def parse_tree() -> List[int]:
         parsed_data = data.splitlines()
 
         currency = parsed_data[0]
-        prices = parsed_data[1:len(parsed_data)-1]
+        prices = parsed_data[1:-1]
         num_questions = len(prices)
-        guaranteed_questions = parsed_data[len(parsed_data)-1].split(sep=" ")
+        guaranteed_questions = parsed_data[-1].split(sep=" ")
         guaranteed_questions = [int(num) for num in guaranteed_questions] + [num_questions]
 
         prices_lst = tree_listbox(tree_frame, 9, num_questions, "prices_lst")
@@ -216,7 +216,7 @@ def check_answer_correct(button_name: str, game: Game) -> None:
     localization = ".question_frame.answers_frame.answer_"
     if game.game_on and game.question_shown and not game.question_answered:
         game.question_answered = True
-        letter = button_name[len(button_name)-1]
+        letter = button_name[-1]
         answer_widget = gui.nametowidget(localization + letter)
 
         confirm_final_answer(answer_widget)
@@ -244,7 +244,7 @@ def check_answer_correct(button_name: str, game: Game) -> None:
 
 def answer_button(root: tk.Frame, new_name: str, game: Game) -> tk.Button:
     button_font = Font(family=times_new_roman, size=12)
-    letter = new_name[len(new_name)-1]
+    letter = new_name[-1]
     return tk.Button(root, name=new_name, bg=black, fg=white,
                      font=button_font, width=3, height=1,
                      text=letter, command=lambda: check_answer_correct(new_name, game))
@@ -284,13 +284,13 @@ def set_walkaway_button():
     gui.nametowidget(localization).config(text="Rezygnuję", padx=19, command=thread_on_walkaway)
 
 
-def thread_on_walkaway():
+def thread_on_walkaway() -> None:
     thread = threading.Thread(target=on_walkaway)
     thread.daemon = True
     thread.start()
 
 
-def on_walkaway():
+def on_walkaway() -> None:
     if game.question_shown:
         localization = ".question_frame.answers_frame.answer_"
         game.game_on = False
@@ -301,12 +301,22 @@ def on_walkaway():
         reset_new_game_button()
 
 
-def setup_new_game():
+def reset_lifeline_graphics() -> None:
+    lifelines_localization = ".game_frame.lifelines_frame."
+    lifeline_names = ["switch", "doubledip", "fifty"]
+    button = "_button"
+    for lifeline in lifeline_names:
+        change_button_image(lifelines_localization + lifeline + button, lifeline + ".png")
+
+
+def setup_new_game() -> None:
     set_walkaway_button()
     reset_pointers()
     game.question_number = 1
     game.question_shown = False
     game.get_questions()
+    reset_lifeline_graphics()
+    game.reset_lifelines()
 
 
 def start_thread_lets_play():
@@ -332,16 +342,15 @@ def write_answer(question: list, indices: list, stop: int, end: int, answer_str:
 
 
 def write_question(question: list) -> None:
-    time_question = 0.1
-    time_answers = 0.1
     question_widget = gui.nametowidget(".question_frame.question_text")
-    insert_text(question_widget, question[1])
-    sleep(time_question)
+    gui.after(500, lambda: insert_text(question_widget, question[1]))
     indices = [i for i in range(2, 6)]
-    answers = ["A", "B", "C", "D"]
-    for i in range(4):
-        write_answer(question, indices, 2, 5-i, "answer_" + answers[i])
-        sleep(time_answers)
+    answer_step = 1000
+    # cannot loop on that
+    gui.after(answer_step, lambda: write_answer(question, indices, 2, 5, "answer_A"))
+    gui.after(answer_step*2, lambda: write_answer(question, indices, 2, 5, "answer_B"))
+    gui.after(answer_step*3, lambda: write_answer(question, indices, 2, 5, "answer_C"))
+    gui.after(answer_step*4, lambda: write_answer(question, indices, 2, 5, "answer_D"))
 
 
 def next_question():
@@ -373,6 +382,35 @@ def reset_pointers() -> None:
         gui.nametowidget(localization).insert(i, " ")
 
 
+def thread_switch() -> None:
+    thread = threading.Thread(target=switch_the_question)
+    thread.daemon = True
+    thread.start()
+
+
+def change_button_image(localization: str, image_path: str) -> None:
+    image = Image.open(str(graphics_folder / image_path))
+    image_resized = resize_image(image, lifelines_width, lifelines_height)
+    button = gui.nametowidget(localization)
+    button.config(image=image_resized)
+    button.image = image_resized
+
+
+def switch_the_question() -> None:
+    if game.game_on and game.question_shown and not game.switch:
+        switch_localization = ".game_frame.lifelines_frame.switch_button"
+        change_button_image(switch_localization, "switchactivated.png")
+        play(game.lifeline_themes[-1])
+        answers = ["A", "B", "C", "D"]
+        answers_localization = ".question_frame.answers_frame.answer_"
+        gui.after(2000, lambda: green_answer(answers, answers_localization))
+        gui.after(5000, lambda: clear_question_and_answer_boxes())
+        music = game.get_music_for_question()
+        gui.after(6000, lambda: play(music[1]))
+        gui.after(6500, lambda: change_button_image(switch_localization, "switchused.png"))
+        gui.after(7000, lambda: write_question(game.lifeline_switch()))
+
+
 if __name__ == "__main__":
     gui = tk.Tk(className='Milionerzy')
     gui.geometry("820x500")
@@ -389,7 +427,7 @@ if __name__ == "__main__":
     play_intro()
     set_lifelines()
     guaranteed_questions = parse_tree()
-    num_questions = guaranteed_questions[len(guaranteed_questions)-1]
+    num_questions = guaranteed_questions[-1]
     game = Game(guaranteed_questions)
     game.get_questions()
     set_game_button()
