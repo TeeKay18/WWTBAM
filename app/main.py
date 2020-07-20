@@ -49,7 +49,8 @@ def set_lifelines() -> None:
 
     fifty_image = Image.open(str(graphics_folder / "fifty.png"))
     fifty_image_resized = resize_image(fifty_image, lifelines_width, lifelines_height)
-    fifty_button = button_with_image(lifelines_frame, fifty_image_resized, None, "fifty_button")
+    fifty_button = button_with_image(lifelines_frame, fifty_image_resized,
+                                     thread_fifty, "fifty_button")
 
     switch_image = Image.open(str(graphics_folder / "switch.png"))
     switch_image_resized = resize_image(switch_image, lifelines_width, lifelines_height)
@@ -322,6 +323,7 @@ def setup_new_game() -> None:
 def start_thread_lets_play():
     if not game.game_on:
         setup_new_game()
+    game.question_shown = False
     thread = threading.Thread(target=lets_play)
     thread.daemon = True
     thread.start()
@@ -341,7 +343,12 @@ def write_answer(question: list, indices: list, stop: int, end: int, answer_str:
     insert_text(answer_widget, question[answer_index])
 
 
+def confirm_question_shown():
+    game.question_shown = True
+
+
 def write_question(question: list) -> None:
+    game.question_shown = False
     question_widget = gui.nametowidget(".question_frame.question_text")
     gui.after(500, lambda: insert_text(question_widget, question[1]))
     indices = [i for i in range(2, 6)]
@@ -351,6 +358,7 @@ def write_question(question: list) -> None:
     gui.after(answer_step*2, lambda: write_answer(question, indices, 2, 5, "answer_B"))
     gui.after(answer_step*3, lambda: write_answer(question, indices, 2, 5, "answer_C"))
     gui.after(answer_step*4, lambda: write_answer(question, indices, 2, 5, "answer_D"))
+    gui.after(int(answer_step*4.5), lambda: confirm_question_shown())
 
 
 def next_question():
@@ -362,11 +370,11 @@ def next_question():
     play(music[1])
     question = game.choose_random_question()
     write_question(question)
-    game.question_shown = True
 
 
 def lets_play():
     clear_question_and_answer_boxes()
+    game.question_shown = False
     game_pointer = game.question_number-1
     if game_pointer > 0:
         update_game_tree(game.question_number-1)
@@ -409,6 +417,30 @@ def switch_the_question() -> None:
         gui.after(6000, lambda: play(music[1]))
         gui.after(6500, lambda: change_button_image(switch_localization, "switchused.png"))
         gui.after(7000, lambda: write_question(game.lifeline_switch()))
+
+
+def thread_fifty() -> None:
+    thread = threading.Thread(target=fifty_fifty)
+    thread.daemon = True
+    thread.start()
+
+
+def fifty_fifty() -> None:
+    if game.game_on and game.question_shown and not game.fifty_fifty:
+        fifty_localization = ".game_frame.lifelines_frame.fifty_button"
+        change_button_image(fifty_localization, "fiftyused.png")
+        random_wrong_answers = game.lifeline_fifty_fifty(game.current_question)
+        answers_localization = ".question_frame.answers_frame.answer_"
+        answers = ["A", "B", "C", "D"]
+        play(game.lifeline_themes[0])
+        for answer in answers:
+            answer_text = gui.nametowidget(answers_localization + answer)
+            if answer_text.get("1.0", "end-1c") in random_wrong_answers:
+                answer_text.config(state="normal")
+                answer_text.delete("1.0", "end")
+                answer_text.config(state="disabled")
+        music = game.get_music_for_question()
+        gui.after(1000, lambda: play(music[1]))
 
 
 if __name__ == "__main__":
