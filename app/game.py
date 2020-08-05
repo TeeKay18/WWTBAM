@@ -117,7 +117,9 @@ class Game:
         return self.choose_random_question()
 
     def get_music_for_question(self):
-        return self.music_settings[self.question_number-1]
+        if self.question_number != self.guaranteed_questions[-1]+1:
+            return self.music_settings[self.question_number-1]
+        return None
 
     def reset_lifelines(self):
         self.fifty_fifty = 0
