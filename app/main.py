@@ -10,9 +10,8 @@ from time import sleep
 from tkinter.font import Font
 from typing import List, Callable
 
-from app.colors import white, purple, green, orange, blue, black, red
+from app.colors import white, purple, green, orange, blue, black, red, dark_green
 from app.game import Game
-
 
 app_folder = Path("app")
 times_new_roman = "Times New Roman"
@@ -27,6 +26,8 @@ switch_localization = lifelines_localization + "switch_button"
 curq_localization = ".game_frame.tree_frame.current_question_lst"
 buttons_localization = ".question_frame.answers_frame.button_"
 lifeline_names = ["switch", "doubledip", "fifty"]
+walkaway_text = "Rezygnuję"
+newgame_text = "Nowa gra"
 answer_step = 1000
 
 
@@ -143,7 +144,7 @@ def set_game_button() -> None:
     button_font = Font(family=times_new_roman, size=18)
     button_frame = tk.Frame(game_frame, name="button_frame")
     game_button = tk.Button(button_frame, bg=orange, fg=white,
-                            text="Nowa gra", font=button_font, padx=23,
+                            text=newgame_text, font=button_font, padx=23,
                             command=start_thread_lets_play, name="game_button")
     button_frame.grid(row=2, column=0)
     game_button.grid(row=0, column=0)
@@ -178,7 +179,7 @@ def confirm_final_answer(widget: tk.Text) -> None:
 
 
 def show_correct_answer(widget: tk.Text) -> None:
-    set_widget_color(widget, green)
+    set_widget_color(widget, dark_green)
 
 
 def clear_text(widget: tk.Widget) -> None:
@@ -328,12 +329,12 @@ def set_answer_boxes(game: Game) -> None:
 
 def reset_new_game_button():
     localization = ".game_frame.button_frame.game_button"
-    get_widget(localization).config(text="Nowa gra", padx=23, command=start_thread_lets_play)
+    get_widget(localization).config(text=newgame_text, padx=23, command=start_thread_lets_play)
 
 
 def set_walkaway_button():
     localization = ".game_frame.button_frame.game_button"
-    get_widget(localization).config(text="Rezygnuję", padx=19, command=thread_on_walkaway)
+    get_widget(localization).config(text=walkaway_text, padx=19, command=thread_on_walkaway)
 
 
 def thread_on_walkaway() -> None:
@@ -510,7 +511,7 @@ if __name__ == "__main__":
 
     pygame.init()
 
-    game_frame = tk.Frame(gui, name="game_frame")
+    game_frame = tk.Frame(gui, name="game_frame", bg=blue)
     question_frame = tk.Frame(gui, bg=blue, name="question_frame")
 
     game_frame.grid(row=0, column=0)

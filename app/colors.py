@@ -1,6 +1,7 @@
 white = "#ffffff"
 purple = "#4b0082"
 green = "#00ff00"
+dark_green = "#00bb00"
 orange = "#ffa500"
 blue = "#0000ff"
 black = "#000000"

@@ -1,6 +1,7 @@
 env
 app/questions
 app/music
+graphics
 *.pyc
-*.png
+.png
 *.json
