@@ -1,8 +1,9 @@
 import codecs
 
 from typing import List
-from random import choice, randint
+from secrets import SystemRandom
 from pathlib import Path
+from app.crypto import decryption
 
 
 class Game:
@@ -18,6 +19,7 @@ class Game:
         self.switch = 0
         self.double_dip = 0
         self.guaranteed_sum = 0
+        self.rng = SystemRandom()
 
         self.questions_path = Path("app") / "questions" / "questions.txt"
         self.music_path = Path("app") / "music"
@@ -83,20 +85,30 @@ class Game:
                                 ] for i in range(victory)
                                ]
 
-    def get_questions(self) -> None:
+    def _get_questions_file_content(self) -> str:
         with codecs.open(self.questions_path, "r", "utf-8") as questions_file:
-            questions_data = questions_file.read().splitlines()
-            self._questions = [[int(questions_data[i]),
-                               questions_data[i+1],
-                               questions_data[i+2],
-                               questions_data[i+3],
-                               questions_data[i+4],
-                               questions_data[i+5]]
-                               for i in range(0, int(len(questions_data)), 6)]
-            self._questions = sorted(self._questions, key=lambda x: x[0])
+            return decryption(questions_file.read().encode())
+        return None
+
+    def get_questions(self) -> None:
+        questions_data = self._get_questions_file_content().splitlines()
+        self._questions = [[int(questions_data[i]),
+                            questions_data[i+1],
+                            questions_data[i+2],
+                            questions_data[i+3],
+                            questions_data[i+4],
+                            questions_data[i+5]]
+                           for i in range(0, int(len(questions_data)), 6)]
+        self._questions = sorted(self._questions, key=lambda x: x[0])
 
     def choose_random_question(self) -> list:
-        question = choice(self._questions)
+        q_split = int(len(self._questions) / self.guaranteed_questions[-1])
+        minimum = (self.question_number-1) * q_split
+        maximum = self.question_number * q_split
+        if self.question_number == self.guaranteed_questions[-1]:
+            maximum = len(self._questions)-1
+        rand_index = self.rng.randrange(minimum, maximum)
+        question = self._questions[rand_index]
         self._questions.remove(question)
         self.current_question = question
         return question
@@ -106,9 +118,9 @@ class Game:
 
     def lifeline_fifty_fifty(self, question: list) -> list:
         self.fifty_fifty = self.question_number
-        fst_wrong_answer = question[randint(3, 5)]
+        fst_wrong_answer = question[self.rng.randrange(3, 5)]
         question.remove(fst_wrong_answer)
-        snd_wrong_answer = question[randint(3, 4)]
+        snd_wrong_answer = question[self.rng.randrange(3, 4)]
         question.remove(snd_wrong_answer)
         return [fst_wrong_answer, snd_wrong_answer]
 

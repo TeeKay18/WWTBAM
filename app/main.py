@@ -13,6 +13,7 @@ from typing import List, Callable
 from app.colors import white, purple, green, orange, blue, black, red, dark_green
 from app.game import Game
 
+
 app_folder = Path("app")
 times_new_roman = "Times New Roman"
 graphics_folder = app_folder / "graphics"
@@ -29,6 +30,12 @@ lifeline_names = ["switch", "doubledip", "fifty"]
 walkaway_text = "Rezygnuję"
 newgame_text = "Nowa gra"
 answer_step = 1000
+
+qfont_size = 16
+gbutton_size = 18
+tfont_size = 18
+abutton_size = 12
+afont_size = 12
 
 
 def play(file_path: Path) -> None:
@@ -80,7 +87,7 @@ def set_lifelines() -> None:
 
 
 def tree_listbox(root: tk.Frame, wdth: int, num_questions: int, new_name: str) -> tk.Listbox:
-    tree_font = Font(family=times_new_roman, size=18)
+    tree_font = Font(family=times_new_roman, size=tfont_size)
     return tk.Listbox(root, height=num_questions,
                       bg=purple, fg=white,
                       width=wdth, font=tree_font,
@@ -141,7 +148,7 @@ def parse_tree() -> List[int]:
 
 
 def set_game_button() -> None:
-    button_font = Font(family=times_new_roman, size=18)
+    button_font = Font(family=times_new_roman, size=gbutton_size)
     button_frame = tk.Frame(game_frame, name="button_frame")
     game_button = tk.Button(button_frame, bg=orange, fg=white,
                             text=newgame_text, font=button_font, padx=23,
@@ -151,7 +158,7 @@ def set_game_button() -> None:
 
 
 def set_question_box() -> None:
-    question_font = Font(family=times_new_roman, size=16)
+    question_font = Font(family=times_new_roman, size=qfont_size)
     question_text = tk.Text(question_frame, height=2, font=question_font,
                             bg=purple, fg=white, width=57, wrap="word",
                             name="question_text", state="disabled")
@@ -296,7 +303,7 @@ def check_answer_correct(button_name: str, game: Game) -> None:
 
 
 def answer_button(root: tk.Frame, new_name: str, game: Game) -> tk.Button:
-    button_font = Font(family=times_new_roman, size=12)
+    button_font = Font(family=times_new_roman, size=abutton_size)
     letter = new_name[-1]
     return tk.Button(root, name=new_name, bg=black, fg=white,
                      font=button_font, width=3, height=1,
@@ -304,7 +311,7 @@ def answer_button(root: tk.Frame, new_name: str, game: Game) -> tk.Button:
 
 
 def set_answer_boxes(game: Game) -> None:
-    answer_font = Font(family=times_new_roman, size=12)
+    answer_font = Font(family=times_new_roman, size=afont_size)
     answers_frame = tk.Frame(question_frame, bg=blue, name="answers_frame")
     answer_A = answer_text(answers_frame, answer_font, "answer_A")
     answer_B = answer_text(answers_frame, answer_font, "answer_B")
@@ -511,7 +518,7 @@ if __name__ == "__main__":
 
     pygame.init()
 
-    game_frame = tk.Frame(gui, name="game_frame", bg=blue)
+    game_frame = tk.Frame(gui, name="game_frame", bg=purple)
     question_frame = tk.Frame(gui, bg=blue, name="question_frame")
 
     game_frame.grid(row=0, column=0)
