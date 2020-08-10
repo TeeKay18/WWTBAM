@@ -1,6 +1,5 @@
 <a href="https://github.com/TeeKay18/WWTBAM/releases"><h1 align="center">Who Wants to be a Millionaire?</h1></a>
 
-## Introduction
 [![Python](https://img.shields.io/badge/python-3.8.5-blue)](https://github.com/TeeKay18/WWTBAM) 
 [![Issues Todo](https://img.shields.io/github/issues/TeeKay18/WWTBAM)](https://github.com/TeeKay18/WWTBAM/issues)
 [![Issues Closed](https://img.shields.io/github/issues-closed/TeeKay18/WWTBAM?color=bgreen)](https://github.com/TeeKay18/WWTBAM/issues)
