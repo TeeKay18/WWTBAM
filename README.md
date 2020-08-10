@@ -1,6 +1,6 @@
 <h1 align="center">Who Wants to be a Millionaire?</h1>
 <p align="center">
-  <a href="https://github.com/TeeKay18/WWTBAM/releases"><strong>See latest releases</strong></a>
+  <a href="https://github.com/TeeKay18/WWTBAM/releases"><h2 align="center">See latest releases</h2></a>
 </p>
 
 ## Introduction
