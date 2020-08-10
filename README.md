@@ -1,5 +1,5 @@
 <h1 align="center">Who Wants to be a Millionaire?</h1>
-<h2 align="center"><a href="https://github.com/TeeKay18/WWTBAM/releases">Latest release: 1.0.0-a3 (10th August 2020)</a>n</h2>
+<h2 align="center"><a href="https://github.com/TeeKay18/WWTBAM/releases">Latest release: 1.0.0-a3 (10th August 2020)</a></h2>
 
 
 [![Python](https://img.shields.io/badge/python-3.8.5-blue)](https://github.com/TeeKay18/WWTBAM) 
