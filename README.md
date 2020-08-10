@@ -9,7 +9,7 @@
 Lightweight version of Who Wants to be a Millionaire in Python using Tkinter. Under development with working prototype.
 
 - Translation of 1st question: In which programming language this game was written?
-<img src="./app/screens/screen1.png" width="450" height="320">
+<img src="./app/screens/screen1.png" width="700" height="450">
 
 ### Features
 - Customizable prices tree 
