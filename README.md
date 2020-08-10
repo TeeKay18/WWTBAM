@@ -1,10 +1,19 @@
-# WWTBAM
+<h1 align="center">Who Wants to be a Millionaire?</h1>
+<p align="center">
+  <a href="https://github.com/TeeKay18/WWTBAM/releases"><strong>See latest releases</strong></a>
+</p>
+
+## Introduction
+[![Python](https://img.shields.io/badge/python-3.8.5-blue)](https://github.com/TeeKay18/WWTBAM) 
+[![Issues Todo](https://img.shields.io/github/issues/TeeKay18/WWTBAM)](https://github.com/TeeKay18/WWTBAM/issues)
+[![Issues Closed](https://img.shields.io/github/issues-closed/TeeKay18/WWTBAM?color=bgreen)](https://github.com/TeeKay18/WWTBAM/issues)
+
 Lightweight version of Who Wants to be a Millionaire in Python using Tkinter. Under development with working prototype.
 
 - Translation of 1st question: In which programming language this game was written?
 <img src="./app/screens/screen1.png" width="450" height="320">
 
-## Features
+### Features
 - Customizable prices tree 
 - Customizable music between questions
 - Customizable questions file 
