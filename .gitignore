@@ -5,7 +5,6 @@ env_32bit
 txt_files
 __pycache__
 *.json
-*.png
 *.pyo
 *.pyc
 *.spec
