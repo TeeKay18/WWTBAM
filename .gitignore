@@ -1,9 +1,7 @@
 app/build
-app/music
 dist
 env_64bit
 env_32bit
-graphics
 txt_files
 __pycache__
 *.json
