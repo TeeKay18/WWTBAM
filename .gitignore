@@ -1,8 +1,8 @@
 app/build
 app/music
-app/questions
 dist
-env
+env_64bit
+env_32bit
 graphics
 txt_files
 __pycache__

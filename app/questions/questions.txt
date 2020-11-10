@@ -1,0 +1,138 @@
+1
+Przykładowe pytanie 1
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+1
+Przykładowe pytanie 2
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+1
+Przykładowe pytanie 3
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+1
+Przykładowe pytanie 4
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+2
+Przykładowe pytanie 5
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+2
+Przykładowe pytanie 6
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+2
+Przykładowe pytanie 7
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+3
+Przykładowe pytanie 8
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+3
+Przykładowe pytanie 9
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+3
+Przykładowe pytanie 10
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+4
+Przykładowe pytanie 11
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+4
+Przykładowe pytanie 12
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+4
+Przykładowe pytanie 13
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+5
+Przykładowe pytanie 14
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+6
+Przykładowe pytanie 15
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+6
+Przykładowe pytanie 16
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+6
+Przykładowe pytanie 17
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+7
+Przykładowe pytanie 18
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+7
+Przykładowe pytanie 19
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+8
+Przykładowe pytanie 20
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+8
+Przykładowe pytanie 21
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+9
+Przykładowe pytanie 22
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3
+10
+Przykładowe pytanie 23
+Poprawna odpowiedź
+Zła odpowiedź 1
+Zła odpowiedź 2
+Zła odpowiedź 3

@@ -4,6 +4,8 @@ from typing import List
 from secrets import SystemRandom
 from pathlib import Path
 from app.crypto import decryption
+from cryptography.fernet import InvalidToken
+from binascii import Error
 
 
 class Game:
@@ -87,7 +89,12 @@ class Game:
 
     def _get_questions_file_content(self) -> str:
         with codecs.open(self.questions_path, "r", "utf-8") as questions_file:
-            return decryption(questions_file.read().encode())
+            file_content = questions_file.read()
+            try:
+                return decryption(file_content.encode())
+            except (InvalidToken, Error):
+                return file_content
+            
         return None
 
     def get_questions(self) -> None:
